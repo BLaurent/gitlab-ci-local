@@ -1,0 +1,24 @@
+variables:
+  CI_DEBUG_TRACE: "true"
+  FF_USE_FASTZIP: "true"
+  GOLANG_VERSION: "1.22.1"
+.go-cache:
+  variables:
+    GOPATH: $CI_PROJECT_DIR/.go
+  before_script: |
+    mkdir -p "${GOPATH}"
+    chown -R :users $CI_PROJECT_DIR
+    chmod -R a+rwX $CI_PROJECT_DIR
+  cache:
+    paths:
+      - "${GOPATH}/pkg/mod/"
+      - "${GOPATH}/bin"
+image:
+  name: golang:${GOLANG_VERSION}
+stages:
+  - build
+build-job:
+  stage: build
+  extends: [.go-cache]
+  script: |
+    go build
